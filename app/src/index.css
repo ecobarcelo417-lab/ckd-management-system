@@ -1,0 +1,484 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply text-gray-900 antialiased font-sans;
+    position: relative;
+    background-color: #ffffff;
+  }
+
+  /* Studio grain — a whisper of paper-like texture over the whole app,
+     keeps flat white/black fields from reading as a bare screenshot. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: theme('backgroundImage.grain');
+    background-size: 120px 120px;
+    opacity: 0.35;
+  }
+
+  #root {
+    position: relative;
+    z-index: 1;
+  }
+
+  h1, h2, h3 {
+    font-family: '"Fraunces"', ui-serif, Georgia, serif;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(20, 20, 20, 0.15);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(20, 20, 20, 0.3);
+    background-clip: padding-box;
+  }
+
+  :focus-visible {
+    outline: 2px solid #000000;
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+    .card:hover,
+    .card-flat:hover,
+    .card-static:hover,
+    .tilt:hover {
+      transform: none !important;
+    }
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+@layer components {
+
+  /* ---------- Buttons ---------- */
+  /* All button variants are now first-class 3D tiles: Layout.tsx's delegated
+     pointer listener also targets .btn-* (see the selector list there), so
+     hovering any button tilts it toward the cursor exactly like a card, and
+     pressing it snaps down with a springy release — the "physical key you
+     can push" feel iOS/visionOS controls have. */
+  .btn-primary,
+  .btn-secondary,
+  .btn-danger,
+  .btn-success,
+  .btn-warning {
+    --rx: 0deg;
+    --ry: 0deg;
+    position: relative;
+    overflow: hidden;
+    transform: perspective(600px) rotateX(var(--rx)) rotateY(var(--ry)) translateZ(0);
+    transition: transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 220ms theme('transitionTimingFunction.premium'), background-color 150ms ease, border-color 150ms ease;
+  }
+
+  .btn-primary::after,
+  .btn-secondary::after,
+  .btn-danger::after,
+  .btn-success::after,
+  .btn-warning::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -20%;
+    width: 30%;
+    height: 200%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent);
+    transform: translateX(-140%) skewX(-12deg);
+    pointer-events: none;
+  }
+
+  .btn-primary:hover::after,
+  .btn-danger:hover::after,
+  .btn-success:hover::after,
+  .btn-warning:hover::after {
+    animation: shineSweep 0.9s theme('transitionTimingFunction.premium');
+  }
+
+  .btn-primary:active:not(:disabled),
+  .btn-secondary:active,
+  .btn-danger:active:not(:disabled),
+  .btn-success:active:not(:disabled),
+  .btn-warning:active:not(:disabled) {
+    transform: perspective(600px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(2px) scale(0.94) translateZ(0);
+    transition-duration: 90ms;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-4 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl shadow-button-rest focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .btn-primary:hover:not(:disabled) {
+    @apply bg-black;
+    box-shadow: theme('boxShadow.depth-hover');
+    transform: perspective(600px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(-3px) translateZ(0);
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-4 py-2.5 bg-white text-gray-900 border-2 border-gray-900 text-sm font-semibold rounded-xl focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2;
+  }
+  .btn-secondary:hover {
+    @apply bg-gray-900 text-white;
+    transform: perspective(600px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(-3px) translateZ(0);
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center px-4 py-2.5 bg-coral-800 text-white text-sm font-semibold rounded-xl shadow-button-rest focus:outline-none focus:ring-2 focus:ring-coral-800 focus:ring-offset-2;
+  }
+  .btn-danger:hover {
+    @apply bg-coral-900;
+    box-shadow: theme('boxShadow.depth-hover');
+    transform: perspective(600px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(-3px) translateZ(0);
+  }
+
+  .btn-success {
+    @apply inline-flex items-center justify-center px-4 py-2.5 bg-leaf-800 text-white text-sm font-semibold rounded-xl shadow-button-rest focus:outline-none focus:ring-2 focus:ring-leaf-800 focus:ring-offset-2;
+  }
+  .btn-success:hover {
+    @apply bg-leaf-900;
+    box-shadow: theme('boxShadow.depth-hover');
+    transform: perspective(600px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(-3px) translateZ(0);
+  }
+
+  .btn-warning {
+    @apply inline-flex items-center justify-center px-4 py-2.5 bg-sunbeam-800 text-white text-sm font-semibold rounded-xl shadow-button-rest focus:outline-none focus:ring-2 focus:ring-sunbeam-800 focus:ring-offset-2;
+  }
+  .btn-warning:hover {
+    @apply bg-gray-900;
+    box-shadow: theme('boxShadow.depth-hover');
+    transform: perspective(600px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(-3px) translateZ(0);
+  }
+
+  /* ---------- Cards (flat, high-contrast — solid white panels with a
+     crisp border; motion/tilt kept for interactivity, material is flat) ---------- */
+  /* Layout.tsx mounts one delegated `pointermove` listener for the whole app
+     that writes --rx / --ry (tilt angle) and --mx / --my (glare position)
+     onto whichever .card, .card-flat, .card-static, .tilt, button, or nav
+     element the pointer is over. The transform + glare below only activate
+     on :hover, so elements with their own JS-driven tilt (e.g. StatCard's
+     framer-motion springs, which set an inline transform) simply override
+     this at the style level — no conflict, just a graceful fallback. */
+  .card,
+  .card-flat,
+  .card-static,
+  .tilt {
+    --rx: 0deg;
+    --ry: 0deg;
+    --mx: 50%;
+    --my: 50%;
+  }
+
+  .card {
+    @apply relative rounded-[1.4rem] border border-gray-200 p-6 overflow-hidden bg-white;
+    box-shadow: theme('boxShadow.depth-2');
+    transform: perspective(1200px) rotateX(var(--rx)) rotateY(var(--ry)) translateZ(0);
+    transition: transform 320ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 320ms cubic-bezier(0.16, 1, 0.3, 1), border-color 220ms ease;
+    will-change: transform;
+  }
+  /* Glare + tilt only apply to .card / .card-flat / .tilt — genuine floating
+     widgets (stat tiles, chart panels). .card-static deliberately opts out:
+     it's used for content-dense surfaces like data tables and filter bars,
+     where a whole-surface 3D tilt makes every row of text skew and swim,
+     and a bright glare sweeping across body text makes it unreadable. See
+     Layout.tsx's TILT_SELECTOR, which also excludes .card-static. */
+  .card:hover,
+  .card-flat:hover {
+    transform: perspective(1200px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(-8px) scale(1.015) translateZ(0);
+    box-shadow: theme('boxShadow.depth-float');
+    border-color: theme('colors.gray.900');
+  }
+
+  /* .card-static: same flat material, but hover only nudges elevation
+     (shadow deepens slightly) — no rotation, no translateY jump — so
+     hovering anywhere over a table or filter bar doesn't move the text
+     underneath the cursor. */
+  .card-static:hover {
+    box-shadow: theme('boxShadow.depth-3');
+    border-color: theme('colors.gray.900');
+  }
+
+  .card-flat {
+    @apply relative rounded-[1.4rem] border border-gray-200 p-6 overflow-hidden bg-white;
+    box-shadow: theme('boxShadow.depth-1');
+    transform: perspective(1200px) rotateX(var(--rx)) rotateY(var(--ry)) translateZ(0);
+    transition: transform 320ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 320ms cubic-bezier(0.16, 1, 0.3, 1), border-color 220ms ease;
+  }
+
+  /* .card-static never tilts: no --rx/--ry transform at all, so it can't
+     skew or blur the text/rows inside it. */
+  .card-static {
+    @apply relative rounded-[1.4rem] border border-gray-200 p-6 overflow-hidden bg-white;
+    box-shadow: theme('boxShadow.depth-2');
+    transition: box-shadow 320ms cubic-bezier(0.16, 1, 0.3, 1), border-color 220ms ease;
+  }
+
+  /* Standalone tilt utility for surfaces that aren't `.card` (e.g. the login
+     card, the 3D orb frame) but still want the pointer-glare + float treatment. */
+  .tilt {
+    position: relative;
+    transform: perspective(1200px) rotateX(var(--rx)) rotateY(var(--ry)) translateZ(0);
+    transition: transform 320ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .tilt:hover {
+    transform: perspective(1200px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(-3px) translateZ(0);
+  }
+
+  /* Sidebar nav items — small 3D tiles that tilt toward the cursor and pop
+     forward slightly, same physics as buttons/cards but tuned for a pill. */
+  .nav-tile {
+    --rx: 0deg;
+    --ry: 0deg;
+    transform: perspective(600px) rotateX(var(--rx)) rotateY(var(--ry)) translateZ(0);
+    transition: transform 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .nav-tile:hover {
+    transform: perspective(600px) rotateX(var(--rx)) rotateY(var(--ry)) translateX(2px) translateZ(0);
+  }
+  .nav-tile:active {
+    transform: perspective(600px) rotateX(var(--rx)) rotateY(var(--ry)) scale(0.96) translateZ(0);
+    transition-duration: 90ms;
+  }
+
+  /* Stat tile used on dashboards — colored top accent + glow on hover */
+  .stat-tile {
+    @apply relative;
+  }
+
+  .stat-tile::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 999px 999px 0 0;
+    background: linear-gradient(90deg, var(--accent-from, #c3c3c3), var(--accent-to, #606060));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .stat-tile:hover::before {
+    transform: scaleX(1);
+  }
+
+  /* Trend chips — small up/down/flat indicators next to a metric */
+  .trend-chip {
+    @apply inline-flex items-center gap-1 text-[11px] font-mono font-semibold px-2 py-0.5 rounded-full;
+  }
+  .trend-up {
+    @apply trend-chip bg-leaf-50 text-leaf-700 ring-1 ring-inset ring-leaf-200;
+  }
+  .trend-down {
+    @apply trend-chip bg-coral-50 text-coral-700 ring-1 ring-inset ring-coral-200;
+  }
+  .trend-flat {
+    @apply trend-chip bg-gray-100 text-gray-500 ring-1 ring-inset ring-gray-200;
+  }
+
+  /* Static outline behind featured/3D panels — replaces the old soft
+     pulsing color glow with a crisp, flat ring. */
+  .glow-panel {
+    position: relative;
+  }
+  .glow-panel::before {
+    content: '';
+    position: absolute;
+    inset: -6%;
+    border-radius: 999px;
+    border: 1px solid theme('colors.gray.200');
+    pointer-events: none;
+    z-index: 0;
+  }
+  .glow-panel > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  
+
+  /* ---------- Inputs ---------- */
+  /* .input is an alias of .input-field — a few forms (Shift Handoff, Symptom
+     Log) reference the shorter name; keeping both selectors means neither
+     ever falls back to an unstyled browser-default input. */
+  .input-field,
+  .input {
+    @apply w-full px-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-sm shadow-soft placeholder:text-gray-400 focus:outline-none hover:border-gray-300;
+    transition: border-color 180ms ease, box-shadow 220ms theme('transitionTimingFunction.premium'), transform 180ms theme('transitionTimingFunction.premium');
+  }
+  .input-field:focus,
+  .input:focus {
+    @apply border-gray-900;
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.12);
+    transform: translateY(-1px);
+  }
+
+  .label {
+    @apply block text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1.5;
+  }
+
+  /* ---------- Tables ---------- */
+  .table-header {
+    @apply px-6 py-3.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider bg-gray-50 border-b-2 border-gray-900;
+  }
+
+  .table-cell {
+    @apply px-6 py-4 whitespace-nowrap text-sm text-gray-700;
+  }
+
+  .table-row-hover {
+    @apply transition-all duration-150 bg-white;
+  }
+  .table-row-hover:hover {
+    @apply bg-gray-50;
+    box-shadow: inset 3px 0 0 0 theme('colors.gray.900');
+  }
+
+  /* ---------- Stat / list-row icon chips ---------- */
+  /* Small colored icon tile used on list rows (e.g. Appointments cards) —
+     mirrors the accent tiles on StatCard.tsx so the two stay visually
+     consistent even though they're built two different ways. */
+  .stat-icon {
+    @apply relative h-12 w-12 rounded-xl flex items-center justify-center shrink-0 ring-1 ring-inset;
+  }
+  .stat-icon-blue {
+    @apply bg-skyglow-50 text-skyglow-600 ring-skyglow-100;
+  }
+  .stat-icon-green {
+    @apply bg-leaf-50 text-leaf-600 ring-leaf-100;
+  }
+  .stat-icon-yellow {
+    @apply bg-sunbeam-50 text-sunbeam-600 ring-sunbeam-100;
+  }
+  .stat-icon-red {
+    @apply bg-coral-50 text-coral-600 ring-coral-100;
+  }
+  .stat-icon-purple {
+    @apply bg-graphite-50 text-graphite-600 ring-graphite-100;
+  }
+  .stat-icon-gray {
+    @apply bg-gray-100 text-gray-500 ring-gray-200;
+  }
+
+  /* ---------- Badges ---------- */
+  .badge {
+    @apply inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-full ring-2 ring-inset transition-transform duration-150 ease-out;
+  }
+
+  .badge-blue {
+    @apply badge bg-skyglow-50 text-skyglow-700 ring-skyglow-200;
+  }
+
+  .badge-green {
+    @apply badge bg-leaf-50 text-leaf-700 ring-leaf-200;
+  }
+
+  .badge-yellow {
+    @apply badge bg-sunbeam-50 text-sunbeam-700 ring-sunbeam-200;
+  }
+
+  .badge-red {
+    @apply badge bg-coral-50 text-coral-700 ring-coral-200;
+  }
+
+  .badge-gray {
+    @apply badge bg-gray-100 text-gray-600 ring-gray-200;
+  }
+
+  /* ---------- Misc utilities ---------- */
+  .glass {
+    @apply bg-white border border-gray-200;
+  }
+
+  .page-header {
+    @apply flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4;
+  }
+
+  .page-title {
+    @apply text-2xl sm:text-3xl font-display font-semibold text-gray-900 tracking-tight;
+  }
+
+  .page-subtitle {
+    @apply text-gray-500 mt-0.5;
+  }
+
+  .section-title {
+    @apply text-lg font-display font-semibold text-gray-900;
+  }
+
+  .divider-fade {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(20,20,20,0.08), transparent);
+  }
+
+  .skeleton {
+    @apply relative overflow-hidden bg-gray-100 rounded-lg;
+    background-image: linear-gradient(90deg, rgba(255,255,255,0) 0, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0) 100%);
+    background-size: 400px 100%;
+    background-repeat: no-repeat;
+    background-color: theme('colors.gray.100');
+    animation: skeleton-sweep 1.6s ease-in-out infinite;
+  }
+
+  @keyframes skeleton-sweep {
+    0% { background-position: -400px 0; }
+    100% { background-position: 400px 0; }
+  }
+
+  .hover-lift {
+    @apply transition-all duration-200 ease-out hover:shadow-premium-lg hover:-translate-y-0.5;
+  }
+
+  .icon-btn {
+    --rx: 0deg;
+    --ry: 0deg;
+    @apply p-2.5 rounded-full text-gray-400 hover:text-gray-900 hover:bg-gray-100 relative;
+    transform: perspective(500px) rotateX(var(--rx)) rotateY(var(--ry)) translateZ(0);
+    transition: transform 220ms cubic-bezier(0.34, 1.56, 0.64, 1), background-color 150ms ease, color 150ms ease;
+  }
+  .icon-btn:hover {
+    transform: perspective(500px) rotateX(var(--rx)) rotateY(var(--ry)) scale(1.12) translateZ(0);
+  }
+  .icon-btn:active {
+    transform: perspective(500px) rotateX(var(--rx)) rotateY(var(--ry)) scale(0.88) translateZ(0);
+    transition-duration: 90ms;
+  }
+
+  /* Headline numbers / hero labels — solid, static, high-contrast */
+  .text-gradient {
+    @apply text-gray-900;
+  }
+
+  /* Floating utility for icons / decorative elements */
+  .float-slow {
+    animation: float 4s ease-in-out infinite;
+  }
+}
