@@ -186,6 +186,10 @@ async function seedTodaysDialysisSessions(dateStr, patients, doctors, nurses, no
       const sessionOccurred = status === 'in_progress' || status === 'completed';
       const postWeight = sessionOccurred ? dryWeight : null;
       const fluidRemoved = status === 'completed' ? Math.round((preWeight - postWeight) * 950) : null;
+      // Adequacy labs are only measured once a session actually finishes.
+      // Typical adult hemodialysis targets: Kt/V ~1.2-1.8, URR ~65-75%.
+      const ktv = status === 'completed' ? Math.round((1.2 + deterministicRandom(seed + 8) * 0.6) * 100) / 100 : null;
+      const urr = status === 'completed' ? Math.round((65 + deterministicRandom(seed + 9) * 10) * 10) / 10 : null;
 
       await runAsync(
         `INSERT INTO dialysis_sessions (
@@ -193,8 +197,9 @@ async function seedTodaysDialysisSessions(dateStr, patients, doctors, nurses, no
           doctor_id, nurse_id, machine_id, pre_weight, post_weight,
           weight_gain, dry_weight, fluid_removed,
           blood_pressure_before, heart_rate_before,
-          blood_pressure_after, heart_rate_after
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          blood_pressure_after, heart_rate_after,
+          kt_v, urea_reduction_ratio
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           patient.id, dateStr, time, durationMinutes, status,
           doctor.id, nurse.id, machineId,
@@ -207,6 +212,8 @@ async function seedTodaysDialysisSessions(dateStr, patients, doctors, nurses, no
           sessionOccurred ? 70 + Math.round(deterministicRandom(seed + 4) * 20) : null,
           status === 'completed' ? `${115 + Math.round(deterministicRandom(seed + 5) * 20)}/${72 + Math.round(deterministicRandom(seed + 6) * 10)}` : null,
           status === 'completed' ? 68 + Math.round(deterministicRandom(seed + 7) * 20) : null,
+          ktv,
+          urr,
         ]
       );
       created++;
