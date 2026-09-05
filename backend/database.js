@@ -44,6 +44,28 @@ function toPgPlaceholders(sql) {
 }
 
 /**
+ * node-pg returns BIGINT-derived values (COUNT(*), SUM(...) on integer
+ * columns) as strings, not numbers — this avoids silently truncating
+ * values above Number.MAX_SAFE_INTEGER. SQLite never did this, so every
+ * route that does `sum + row.some_count` was relying on real numbers
+ * coming back and silently fell into string concatenation once Postgres
+ * started returning "12" instead of 12 (e.g. Reports.tsx's stats.reduce
+ * calls). None of this app's aggregates need bigint precision, so it's
+ * safe to coerce every numeric-looking string field back to a JS number
+ * on the way out.
+ */
+function coerceNumericStrings(row) {
+  if (!row) return row;
+  for (const key of Object.keys(row)) {
+    const value = row[key];
+    if (typeof value === 'string' && value !== '' && !isNaN(value) && !isNaN(parseFloat(value))) {
+      row[key] = Number(value);
+    }
+  }
+  return row;
+}
+
+/**
  * SQLite's error message for a UNIQUE violation is literally the string
  * "UNIQUE constraint failed: <table>.<column>". Postgres uses error code
  * 23505 with a different message shape. The two call sites that check for
@@ -102,7 +124,7 @@ const db = {
     }
     const pgSql = toPgPlaceholders(sql);
     pool.query(pgSql, params)
-      .then((result) => callback(null, result.rows[0]))
+      .then((result) => callback(null, coerceNumericStrings(result.rows[0])))
       .catch((err) => callback(normalizeError(err)));
   },
 
@@ -114,7 +136,7 @@ const db = {
     }
     const pgSql = toPgPlaceholders(sql);
     pool.query(pgSql, params)
-      .then((result) => callback(null, result.rows))
+      .then((result) => callback(null, result.rows.map(coerceNumericStrings)))
       .catch((err) => callback(normalizeError(err)));
   },
 
