@@ -88,6 +88,8 @@ export interface DialysisSession {
   complications: string;
   notes: string;
   created_at: string;
+  created_by_user_id?: number;
+  created_by_name?: string;
 }
 
 export interface LabResult {
@@ -146,6 +148,8 @@ export interface Appointment {
   status: 'scheduled' | 'completed' | 'cancelled' | 'no_show';
   notes: string;
   created_at: string;
+  created_by_user_id?: number;
+  created_by_name?: string;
 }
 
 export interface Notification {
