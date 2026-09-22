@@ -187,6 +187,7 @@ const DialysisSessions: React.FC = () => {
                 <th className="table-header">Machine</th>
                 <th className="table-header">Pre Weight</th>
                 <th className="table-header">Post Weight</th>
+                <th className="table-header">Created By</th>
                 <th className="table-header">Actions</th>
               </tr>
             </thead>
@@ -212,6 +213,7 @@ const DialysisSessions: React.FC = () => {
                   <td className="table-cell">{session.machine_id || 'TBD'}</td>
                   <td className="table-cell">{session.pre_weight ? `${session.pre_weight} kg` : '-'}</td>
                   <td className="table-cell">{session.post_weight ? `${session.post_weight} kg` : '-'}</td>
+                  <td className="table-cell text-sm text-gray-500">{session.created_by_name || '\u2014'}</td>
                   <td className="table-cell">
                     <Link 
                       to={`/dialysis/${session.id}`} 
