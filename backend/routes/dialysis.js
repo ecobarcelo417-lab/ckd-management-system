@@ -92,11 +92,16 @@ router.post('/', verifyToken, checkRole(['admin', 'doctor', 'nurse']), (req, res
     return res.status(400).json({ error: 'Patient, date, and time are required' });
   }
 
+  // Record who created this session, taken from their logged-in account
+  // (never from the request body, so it can't be spoofed by the client).
+  const createdByUserId = req.user.userId;
+  const createdByName = req.user.username;
+
   db.run(
     `INSERT INTO dialysis_sessions 
-    (patient_id, scheduled_date, scheduled_time, duration_minutes, status, doctor_id, nurse_id, machine_id, dry_weight, dialysate_composition)
-    VALUES (?, ?, ?, ?, 'scheduled', ?, ?, ?, ?, ?)`,
-    [patient_id, scheduled_date, scheduled_time, duration_minutes || 240, doctor_id, nurse_id, machine_id, dry_weight, dialysate_composition],
+    (patient_id, scheduled_date, scheduled_time, duration_minutes, status, doctor_id, nurse_id, machine_id, dry_weight, dialysate_composition, created_by_user_id, created_by_name)
+    VALUES (?, ?, ?, ?, 'scheduled', ?, ?, ?, ?, ?, ?, ?)`,
+    [patient_id, scheduled_date, scheduled_time, duration_minutes || 240, doctor_id, nurse_id, machine_id, dry_weight, dialysate_composition, createdByUserId, createdByName],
     function(err) {
       if (err) return res.status(500).json({ error: err.message });
       res.status(201).json({ message: 'Session created', sessionId: this.lastID });
