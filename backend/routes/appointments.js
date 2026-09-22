@@ -76,9 +76,14 @@ router.post('/', verifyToken, checkRole(['admin', 'doctor', 'nurse']), (req, res
     return res.status(400).json({ error: 'Required fields missing' });
   }
 
+  // Record who created this appointment, taken from their logged-in account
+  // (never from the request body, so it can't be spoofed by the client).
+  const createdByUserId = req.user.userId;
+  const createdByName = req.user.username;
+
   db.run(
-    'INSERT INTO appointments (patient_id, doctor_id, appointment_date, appointment_time, type, notes) VALUES (?, ?, ?, ?, ?, ?)',
-    [patient_id, doctor_id, appointment_date, appointment_time, type, notes],
+    'INSERT INTO appointments (patient_id, doctor_id, appointment_date, appointment_time, type, notes, created_by_user_id, created_by_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+    [patient_id, doctor_id, appointment_date, appointment_time, type, notes, createdByUserId, createdByName],
     function(err) {
       if (err) return res.status(500).json({ error: err.message });
       res.status(201).json({ message: 'Appointment created', appointmentId: this.lastID });
