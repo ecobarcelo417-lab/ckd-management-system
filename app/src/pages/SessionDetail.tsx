@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import {
   ArrowLeft, Clock, UserCheck, Calendar, HeartPulse,
-  Save, Play, CheckCircle, AlertCircle
+  Save, Play, CheckCircle, AlertCircle, PenLine
 } from 'lucide-react';
 import { DialysisSession } from '../types';
 
@@ -213,6 +213,15 @@ const SessionDetail: React.FC = () => {
             <div>
               <p className="text-sm text-gray-500">Nurse</p>
               <p className="font-medium text-gray-900">{session.nurse_name || 'Unassigned'}</p>
+            </div>
+          </div>
+        </div>
+        <div className="card p-4">
+          <div className="flex items-center space-x-3">
+            <PenLine className="h-5 w-5 text-primary-600" />
+            <div>
+              <p className="text-sm text-gray-500">Created By</p>
+              <p className="font-medium text-gray-900">{session.created_by_name || 'Unknown'}</p>
             </div>
           </div>
         </div>
