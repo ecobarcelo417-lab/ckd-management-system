@@ -272,6 +272,7 @@ const Appointments: React.FC = () => {
                     {appointment.doctor_name && (
                       <p className="text-sm text-gray-500">Doctor: {appointment.doctor_name}</p>
                     )}
+                    <p className="text-xs text-gray-400">Created by: {appointment.created_by_name || 'Unknown'}</p>
                   </div>
                 </div>
                 <span className={`badge ${getStatusBadge(appointment.status)}`}>
