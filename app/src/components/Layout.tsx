@@ -169,10 +169,22 @@ const Layout: React.FC = () => {
 
   return (
     <div className="relative min-h-screen bg-gray-50 flex p-3 gap-3">
+      {/*
+        Sidebar must stay fixed at every screen size, not just mobile.
+        Previously this used `lg:static lg:inset-auto` on large screens,
+        which dropped it back into normal document flow - so it scrolled
+        away with the page instead of staying pinned. Keeping `fixed` and
+        the `inset-y-3 left-3` positioning active at all breakpoints means
+        it now stays glued to the viewport regardless of screen size or
+        how far the main content area is scrolled. `lg:translate-x-0`
+        still applies so it's always visibly open (not slid offscreen)
+        on desktop - only the positioning strategy changed, not the
+        open/closed animation logic used for mobile.
+      */}
       <aside className={`
         fixed inset-y-3 left-3 z-50 w-72 rounded-[1.75rem] border border-gray-200 shadow-depth-4 transform transition-transform duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] flex flex-col overflow-hidden bg-white
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-[calc(100%+2rem)]'}
-        lg:translate-x-0 lg:static lg:inset-auto
+        lg:translate-x-0
       `}>
         <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200 shrink-0">
           <div className="flex items-center space-x-2.5">
@@ -247,7 +259,14 @@ const Layout: React.FC = () => {
         </div>
       </aside>
 
-      <div className="relative z-10 flex-1 flex flex-col min-w-0 overflow-hidden gap-3">
+      {/*
+        lg:ml-[19.5rem] reserves space for the now-always-fixed sidebar
+        (18rem width + 1.5rem gap) so page content starts to the right of
+        it instead of sliding underneath. Mobile/tablet keep no margin
+        since the sidebar there is an overlay (translated offscreen when
+        closed), not something content needs to make room for.
+      */}
+      <div className="relative z-10 flex-1 flex flex-col min-w-0 overflow-hidden gap-3 lg:ml-[19.5rem]">
         <header className="rounded-[1.5rem] border border-gray-200 shadow-depth-2 sticky top-0 z-30 bg-white">
           <div className="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
             <button
