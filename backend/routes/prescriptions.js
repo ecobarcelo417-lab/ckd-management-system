@@ -65,7 +65,7 @@ router.get('/:id', verifyToken, (req, res) => {
 });
 
 // Create prescription
-router.post('/', verifyToken, checkRole(['admin', 'doctor']), (req, res) => {
+router.post('/', verifyToken, checkRole(['doctor']), (req, res) => {
   const {
     patient_id, medication_name, dosage, frequency, route,
     start_date, end_date, instructions
@@ -90,7 +90,7 @@ router.post('/', verifyToken, checkRole(['admin', 'doctor']), (req, res) => {
 });
 
 // Update prescription
-router.put('/:id', verifyToken, checkRole(['admin', 'doctor']), (req, res) => {
+router.put('/:id', verifyToken, checkRole(['doctor']), (req, res) => {
   const { dosage, frequency, route, end_date, instructions, status } = req.body;
 
   db.run(
@@ -106,7 +106,7 @@ router.put('/:id', verifyToken, checkRole(['admin', 'doctor']), (req, res) => {
 });
 
 // Delete prescription
-router.delete('/:id', verifyToken, checkRole(['admin', 'doctor']), (req, res) => {
+router.delete('/:id', verifyToken, checkRole(['doctor']), (req, res) => {
   db.run('DELETE FROM prescriptions WHERE id = ?', [req.params.id], function(err) {
     if (err) return res.status(500).json({ error: err.message });
     res.json({ message: 'Prescription deleted' });
