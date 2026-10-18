@@ -151,7 +151,7 @@ router.get('/:id/lab-results', verifyToken, (req, res) => {
 });
 
 // Update patient
-router.put('/:id', verifyToken, checkRole(['admin', 'doctor']), (req, res) => {
+router.put('/:id', verifyToken, checkRole(['doctor']), (req, res) => {
   const { date_of_birth, blood_type, emergency_contact, emergency_phone, medical_history, allergies, current_medications, access_type } = req.body;
 
   db.run(
