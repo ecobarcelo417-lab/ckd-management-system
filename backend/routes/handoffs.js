@@ -8,7 +8,7 @@ function nurseIdFromReq(req) {
 }
 
 // List handoffs (nurses see own sent/received; admin sees all)
-router.get('/', verifyToken, checkRole(['admin', 'nurse', 'doctor']), (req, res) => {
+router.get('/', verifyToken, checkRole(['nurse', 'doctor']), (req, res) => {
   const { status, shift_date, direction } = req.query;
   const role = req.user.role;
   const myNurseId = nurseIdFromReq(req);
@@ -62,7 +62,7 @@ router.get('/', verifyToken, checkRole(['admin', 'nurse', 'doctor']), (req, res)
 });
 
 // Pending handoffs for incoming nurse (submitted, not yet acknowledged, targeted or open)
-router.get('/pending', verifyToken, checkRole(['admin', 'nurse']), (req, res) => {
+router.get('/pending', verifyToken, checkRole(['nurse']), (req, res) => {
   const myNurseId = nurseIdFromReq(req);
   let query = `
     SELECT h.*,
@@ -91,7 +91,7 @@ router.get('/pending', verifyToken, checkRole(['admin', 'nurse']), (req, res) =>
 });
 
 // Floor snapshot for outgoing nurse — today's sessions for form prefill
-router.get('/floor-snapshot', verifyToken, checkRole(['admin', 'nurse']), (req, res) => {
+router.get('/floor-snapshot', verifyToken, checkRole(['nurse']), (req, res) => {
   const today = new Date().toISOString().split('T')[0];
   const myNurseId = nurseIdFromReq(req);
 
@@ -138,7 +138,7 @@ router.get('/floor-snapshot', verifyToken, checkRole(['admin', 'nurse']), (req, 
 });
 
 // Get single handoff with patient SBAR items
-router.get('/:id', verifyToken, checkRole(['admin', 'nurse', 'doctor']), (req, res) => {
+router.get('/:id', verifyToken, checkRole(['nurse', 'doctor']), (req, res) => {
   db.get(
     `SELECT h.*,
       fu.full_name as from_nurse_name,
@@ -176,7 +176,7 @@ router.get('/:id', verifyToken, checkRole(['admin', 'nurse', 'doctor']), (req, r
 });
 
 // Create handoff (draft or submitted)
-router.post('/', verifyToken, checkRole(['admin', 'nurse']), (req, res) => {
+router.post('/', verifyToken, checkRole(['nurse']), (req, res) => {
   const fromNurseId = req.user.role === 'nurse' ? nurseIdFromReq(req) : (req.body.from_nurse_id || nurseIdFromReq(req));
   if (!fromNurseId) {
     return res.status(400).json({ error: 'Nurse profile required to create a handoff' });
@@ -305,7 +305,7 @@ function notifyIncoming(handoffId, toNurseId, status, fromNurseId) {
 }
 
 // Update draft handoff
-router.put('/:id', verifyToken, checkRole(['admin', 'nurse']), (req, res) => {
+router.put('/:id', verifyToken, checkRole(['nurse']), (req, res) => {
   db.get('SELECT * FROM shift_handoffs WHERE id = ?', [req.params.id], (err, row) => {
     if (err) return res.status(500).json({ error: err.message });
     if (!row) return res.status(404).json({ error: 'Handoff not found' });
@@ -401,7 +401,7 @@ router.put('/:id', verifyToken, checkRole(['admin', 'nurse']), (req, res) => {
 });
 
 // Submit draft → submitted
-router.put('/:id/submit', verifyToken, checkRole(['admin', 'nurse']), (req, res) => {
+router.put('/:id/submit', verifyToken, checkRole(['nurse']), (req, res) => {
   db.get('SELECT * FROM shift_handoffs WHERE id = ?', [req.params.id], (err, row) => {
     if (err) return res.status(500).json({ error: err.message });
     if (!row) return res.status(404).json({ error: 'Handoff not found' });
@@ -426,7 +426,7 @@ router.put('/:id/submit', verifyToken, checkRole(['admin', 'nurse']), (req, res)
 });
 
 // Incoming nurse acknowledges receipt
-router.put('/:id/acknowledge', verifyToken, checkRole(['admin', 'nurse']), (req, res) => {
+router.put('/:id/acknowledge', verifyToken, checkRole(['nurse']), (req, res) => {
   db.get('SELECT * FROM shift_handoffs WHERE id = ?', [req.params.id], (err, row) => {
     if (err) return res.status(500).json({ error: err.message });
     if (!row) return res.status(404).json({ error: 'Handoff not found' });
@@ -477,7 +477,7 @@ router.put('/:id/acknowledge', verifyToken, checkRole(['admin', 'nurse']), (req,
 });
 
 // Delete draft only
-router.delete('/:id', verifyToken, checkRole(['admin', 'nurse']), (req, res) => {
+router.delete('/:id', verifyToken, checkRole(['nurse']), (req, res) => {
   db.get('SELECT * FROM shift_handoffs WHERE id = ?', [req.params.id], (err, row) => {
     if (err) return res.status(500).json({ error: err.message });
     if (!row) return res.status(404).json({ error: 'Handoff not found' });
