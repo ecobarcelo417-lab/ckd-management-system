@@ -82,7 +82,7 @@ router.get('/:id', verifyToken, (req, res) => {
 });
 
 // Create new session
-router.post('/', verifyToken, checkRole(['doctor', 'nurse']), (req, res) => {
+router.post('/', verifyToken, checkRole(['nurse']), (req, res) => {
   const {
     patient_id, scheduled_date, scheduled_time, duration_minutes,
     doctor_id, nurse_id, machine_id, dry_weight, dialysate_composition
