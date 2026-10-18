@@ -8,7 +8,7 @@ function nurseIdFromReq(req) {
 }
 
 // List handoffs (nurses see own sent/received; admin sees all)
-router.get('/', verifyToken, checkRole(['nurse', 'doctor']), (req, res) => {
+router.get('/', verifyToken, checkRole(['nurse']), (req, res) => {
   const { status, shift_date, direction } = req.query;
   const role = req.user.role;
   const myNurseId = nurseIdFromReq(req);
@@ -138,7 +138,7 @@ router.get('/floor-snapshot', verifyToken, checkRole(['nurse']), (req, res) => {
 });
 
 // Get single handoff with patient SBAR items
-router.get('/:id', verifyToken, checkRole(['nurse', 'doctor']), (req, res) => {
+router.get('/:id', verifyToken, checkRole(['nurse']), (req, res) => {
   db.get(
     `SELECT h.*,
       fu.full_name as from_nurse_name,
