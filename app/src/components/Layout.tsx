@@ -92,12 +92,7 @@ const Layout: React.FC = () => {
       return [
         { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { path: '/patients', label: 'Patients', icon: Users },
-        { path: '/dialysis', label: 'Dialysis Sessions', icon: Droplets },
-        { path: '/lab-results', label: 'Lab Results', icon: FlaskConical },
-        { path: '/prescriptions', label: 'Prescriptions', icon: Pill },
         { path: '/appointments', label: 'Appointments', icon: Calendar },
-        { path: '/symptoms', label: 'Symptom Reports', icon: Thermometer },
-        { path: '/handoffs', label: 'Shift Handoffs', icon: ClipboardList },
         { path: '/users', label: 'User Management', icon: UserCog },
         { path: '/reports', label: 'Reports', icon: BarChart3 },
         { path: '/profile', label: 'Profile', icon: UserCircle },
