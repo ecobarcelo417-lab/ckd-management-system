@@ -13,12 +13,9 @@ import {
   Droplets,
   Calendar,
   Activity,
-  Clock,
-  ChevronRight,
   FlaskConical,
   Pill,
   Gauge,
-  ClipboardList,
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -279,55 +276,6 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
         </div>
-
-        {/* Recent Sessions */}
-        <div className="card animate-fade-in-up" style={{ animationDelay: '120ms' }}>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="section-title">Recent Dialysis Sessions</h3>
-            <Link to="/dialysis" className="text-skyglow-600 hover:text-skyglow-700 text-sm font-semibold flex items-center group">
-              View All <ChevronRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-0.5" />
-            </Link>
-          </div>
-          <div className="overflow-x-auto rounded-xl border border-gray-100">
-            <table className="min-w-full divide-y divide-gray-100">
-              <thead>
-                <tr>
-                  <th className="table-header">Patient</th>
-                  <th className="table-header">Date</th>
-                  <th className="table-header">Time</th>
-                  <th className="table-header">Status</th>
-                  <th className="table-header">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-50">
-                {stats?.recentSessions?.map((session: DialysisSession) => (
-                  <tr key={session.id} className="table-row-hover">
-                    <td className="table-cell font-semibold text-gray-900">{session.patient_name}</td>
-                    <td className="table-cell font-mono">{session.scheduled_date}</td>
-                    <td className="table-cell font-mono">{session.scheduled_time}</td>
-                    <td className="table-cell">
-                      <span className={`badge ${getStatusBadge(session.status)}`}>
-                        {session.status.replace('_', ' ')}
-                      </span>
-                    </td>
-                    <td className="table-cell">
-                      <Link to={`/dialysis/${session.id}`} className="text-skyglow-600 hover:text-skyglow-700 font-semibold">
-                        View
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-                {(!stats?.recentSessions || stats.recentSessions.length === 0) && (
-                  <tr>
-                    <td colSpan={5} className="table-cell text-center text-gray-400 py-8">
-                      No recent sessions found
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
       </motion.div>
     );
   }
@@ -405,26 +353,6 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <StatCard index={0} label="Today's Sessions" value={stats?.todaySessions?.length || 0} icon={Calendar} accent="yellow" />
-          <StatCard index={1} label="In Progress" value={stats?.inProgressSessions?.length || 0} icon={Clock} accent="blue" />
-        </div>
-
-        <div className="card p-4 border border-leaf-100 bg-leaf-50/50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="flex items-start gap-3">
-            <div className="h-10 w-10 rounded-xl bg-leaf-100 flex items-center justify-center shrink-0">
-              <ClipboardList className="h-5 w-5 text-leaf-700" />
-            </div>
-            <div>
-              <p className="font-semibold text-gray-900">Shift handoff protocol</p>
-              <p className="text-sm text-gray-600">Document unit status and patient SBAR before leaving. Acknowledge incoming handoffs at shift start.</p>
-            </div>
-          </div>
-          <Link to="/handoffs" className="btn-primary text-sm whitespace-nowrap self-start sm:self-center">
-            Open handoffs
-          </Link>
-        </div>
-
         <div className="card animate-fade-in-up">
           <h3 className="section-title mb-4">Today's Assigned Sessions</h3>
           <div className="space-y-3">
@@ -472,10 +400,9 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <StatCard index={0} label="Upcoming Sessions" value={stats?.upcomingSessions?.length || 0} icon={Calendar} accent="blue" />
-        <StatCard index={1} label="Recent Labs" value={stats?.recentLabs?.length || 0} icon={FlaskConical} accent="green" />
-        <StatCard index={2} label="Active Medications" value={stats?.activePrescriptions?.length || 0} icon={Pill} accent="purple" />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <StatCard index={0} label="Recent Labs" value={stats?.recentLabs?.length || 0} icon={FlaskConical} accent="green" />
+        <StatCard index={1} label="Active Medications" value={stats?.activePrescriptions?.length || 0} icon={Pill} accent="purple" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
