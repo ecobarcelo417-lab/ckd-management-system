@@ -104,7 +104,7 @@ router.post('/', verifyToken, checkRole(['patient']), (req, res) => {
 });
 
 // Care team marks a log as reviewed
-router.put('/:id/review', verifyToken, checkRole(['doctor', 'nurse']), (req, res) => {
+router.put('/:id/review', verifyToken, checkRole(['nurse']), (req, res) => {
   const reviewerId = req.user.userId;
   const now = new Date().toISOString();
 
@@ -119,7 +119,7 @@ router.put('/:id/review', verifyToken, checkRole(['doctor', 'nurse']), (req, res
   );
 });
 
-// Delete own unreviewed log (patient) or any (doctor)
+// Delete own unreviewed log (patient) (care team cannot delete)
 router.delete('/:id', verifyToken, (req, res) => {
   db.get('SELECT * FROM symptom_logs WHERE id = ?', [req.params.id], (err, row) => {
     if (err) return res.status(500).json({ error: err.message });
@@ -132,7 +132,7 @@ router.delete('/:id', verifyToken, (req, res) => {
       if (row.reviewed) {
         return res.status(400).json({ error: 'Cannot delete a log already reviewed by the care team' });
       }
-    } else if (req.user.role !== 'doctor') {
+    } else {
       return res.status(403).json({ error: 'Access denied' });
     }
 
