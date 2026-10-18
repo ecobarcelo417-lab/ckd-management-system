@@ -54,7 +54,7 @@ router.get('/:id', verifyToken, (req, res) => {
 });
 
 // Create lab result
-router.post('/', verifyToken, checkRole(['admin', 'doctor']), (req, res) => {
+router.post('/', verifyToken, checkRole(['doctor']), (req, res) => {
   const {
     patient_id, test_date, hemoglobin, hematocrit, white_blood_cells, platelets,
     sodium, potassium, chloride, bicarbonate, bun, creatinine, glucose,
@@ -82,7 +82,7 @@ router.post('/', verifyToken, checkRole(['admin', 'doctor']), (req, res) => {
 });
 
 // Update lab result
-router.put('/:id', verifyToken, checkRole(['admin', 'doctor']), (req, res) => {
+router.put('/:id', verifyToken, checkRole(['doctor']), (req, res) => {
   const {
     test_date, hemoglobin, hematocrit, white_blood_cells, platelets,
     sodium, potassium, chloride, bicarbonate, bun, creatinine, glucose,
@@ -106,7 +106,7 @@ router.put('/:id', verifyToken, checkRole(['admin', 'doctor']), (req, res) => {
 });
 
 // Delete lab result
-router.delete('/:id', verifyToken, checkRole(['admin', 'doctor']), (req, res) => {
+router.delete('/:id', verifyToken, checkRole(['doctor']), (req, res) => {
   db.run('DELETE FROM lab_results WHERE id = ?', [req.params.id], function(err) {
     if (err) return res.status(500).json({ error: err.message });
     res.json({ message: 'Lab result deleted' });
