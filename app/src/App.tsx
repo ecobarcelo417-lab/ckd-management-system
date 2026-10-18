@@ -72,27 +72,27 @@ const App: React.FC = () => {
         } />
 
         {/* Dialysis: all roles (patients see own only via API) */}
-        <Route path="dialysis" element={<DialysisSessions />} />
-        <Route path="dialysis/:id" element={<SessionDetail />} />
+        <Route path="dialysis" element={<ProtectedRoute allowedRoles={['doctor', 'nurse', 'patient']}><DialysisSessions /></ProtectedRoute>} />
+        <Route path="dialysis/:id" element={<ProtectedRoute allowedRoles={['doctor', 'nurse', 'patient']}><SessionDetail /></ProtectedRoute>} />
 
         {/* Labs: all can view (scoped); create restricted in UI + API */}
-        <Route path="lab-results" element={<LabResults />} />
+        <Route path="lab-results" element={<ProtectedRoute allowedRoles={['doctor', 'nurse', 'patient']}><LabResults /></ProtectedRoute>} />
 
         {/* Prescriptions: all can view (scoped); create doctor/admin only */}
-        <Route path="prescriptions" element={<Prescriptions />} />
+        <Route path="prescriptions" element={<ProtectedRoute allowedRoles={['doctor', 'nurse', 'patient']}><Prescriptions /></ProtectedRoute>} />
 
         <Route path="appointments" element={<Appointments />} />
 
 
         {/* Nurse shift handoff protocol */}
         <Route path="handoffs" element={
-          <ProtectedRoute allowedRoles={['admin', 'nurse', 'doctor']}>
+          <ProtectedRoute allowedRoles={['nurse', 'doctor']}>
             <ShiftHandoff />
           </ProtectedRoute>
         } />
         {/* Patient self-report + care team review */}
         <Route path="symptoms" element={
-          <ProtectedRoute allowedRoles={['admin', 'doctor', 'nurse', 'patient']}>
+          <ProtectedRoute allowedRoles={['doctor', 'nurse', 'patient']}>
             <SymptomLog />
           </ProtectedRoute>
         } />
