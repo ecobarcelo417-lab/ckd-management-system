@@ -36,11 +36,19 @@ const DialysisSessions: React.FC = () => {
   const [nurses, setNurses] = useState([]);
 
   useEffect(() => {
-    fetchSessions();
     if (user?.role !== 'patient') {
       fetchFormData();
     }
   }, []);
+
+  // Refetch whenever a filter changes (this also runs once on mount).
+  // Previously the select's onChange did `setFilter(value); fetchX();` - but React
+  // has not applied the new state yet at that point, so fetchX() still read the
+  // OLD filter and the server returned the unfiltered list. Driving the fetch
+  // from an effect guarantees it always sees the current filter values.
+  useEffect(() => {
+    fetchSessions();
+  }, [statusFilter, dateFilter]);
 
   const fetchSessions = async () => {
     try {
@@ -124,7 +132,7 @@ const DialysisSessions: React.FC = () => {
           <h1 className="text-2xl sm:text-3xl font-display font-semibold text-gray-900 tracking-tight">Dialysis Sessions</h1>
           <p className="text-gray-500">Manage and monitor dialysis treatments</p>
         </div>
-        {user?.role !== 'patient' && (
+        {user?.role === 'nurse' && (
           <button 
             onClick={() => setShowCreateModal(true)}
             className="btn-primary flex items-center"
@@ -151,7 +159,7 @@ const DialysisSessions: React.FC = () => {
           <div className="sm:w-40">
             <select
               value={statusFilter}
-              onChange={(e) => { setStatusFilter(e.target.value); fetchSessions(); }}
+              onChange={(e) => setStatusFilter(e.target.value)}
               className="input-field"
             >
               <option value="">All Status</option>
@@ -166,7 +174,7 @@ const DialysisSessions: React.FC = () => {
             <input
               type="date"
               value={dateFilter}
-              onChange={(e) => { setDateFilter(e.target.value); fetchSessions(); }}
+              onChange={(e) => setDateFilter(e.target.value)}
               className="input-field"
             />
           </div>
