@@ -82,7 +82,7 @@ router.get('/:id', verifyToken, (req, res) => {
 });
 
 // Create new session
-router.post('/', verifyToken, checkRole(['admin', 'doctor', 'nurse']), (req, res) => {
+router.post('/', verifyToken, checkRole(['doctor', 'nurse']), (req, res) => {
   const {
     patient_id, scheduled_date, scheduled_time, duration_minutes,
     doctor_id, nurse_id, machine_id, dry_weight, dialysate_composition
@@ -110,7 +110,7 @@ router.post('/', verifyToken, checkRole(['admin', 'doctor', 'nurse']), (req, res
 });
 
 // Update session (pre-dialysis assessment)
-router.put('/:id/pre', verifyToken, checkRole(['admin', 'nurse']), (req, res) => {
+router.put('/:id/pre', verifyToken, checkRole(['nurse']), (req, res) => {
   const {
     pre_weight, blood_pressure_before, heart_rate_before, temperature,
     access_site_condition, heparin_dose, notes
@@ -131,7 +131,7 @@ router.put('/:id/pre', verifyToken, checkRole(['admin', 'nurse']), (req, res) =>
 });
 
 // Update session (post-dialysis assessment) — nurse/admin floor workflow
-router.put('/:id/post', verifyToken, checkRole(['admin', 'nurse']), (req, res) => {
+router.put('/:id/post', verifyToken, checkRole(['nurse']), (req, res) => {
   const {
     post_weight, blood_pressure_after, heart_rate_after,
     fluid_removed, kt_v, urea_reduction_ratio, complications, notes
@@ -160,7 +160,7 @@ router.put('/:id/post', verifyToken, checkRole(['admin', 'nurse']), (req, res) =
 });
 
 // Update session status — nurse runs the floor; doctor/admin may cancel/miss
-router.put('/:id/status', verifyToken, checkRole(['admin', 'doctor', 'nurse']), (req, res) => {
+router.put('/:id/status', verifyToken, checkRole(['doctor', 'nurse']), (req, res) => {
   const { status } = req.body;
   const validStatuses = ['scheduled', 'in_progress', 'completed', 'cancelled', 'missed'];
 
@@ -179,7 +179,7 @@ router.put('/:id/status', verifyToken, checkRole(['admin', 'doctor', 'nurse']), 
 });
 
 // Delete session
-router.delete('/:id', verifyToken, checkRole(['admin', 'doctor']), (req, res) => {
+router.delete('/:id', verifyToken, checkRole(['doctor']), (req, res) => {
   db.run('DELETE FROM dialysis_sessions WHERE id = ?', [req.params.id], function(err) {
     if (err) return res.status(500).json({ error: err.message });
     res.json({ message: 'Session deleted' });
