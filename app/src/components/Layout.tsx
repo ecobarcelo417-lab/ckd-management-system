@@ -107,8 +107,6 @@ const Layout: React.FC = () => {
         { path: '/lab-results', label: 'Lab Results', icon: FlaskConical },
         { path: '/prescriptions', label: 'Prescriptions', icon: Pill },
         { path: '/appointments', label: 'Appointments', icon: Calendar },
-        { path: '/symptoms', label: 'Symptom Reports', icon: Thermometer },
-        { path: '/handoffs', label: 'Shift Handoffs', icon: ClipboardList },
         { path: '/reports', label: 'Clinical Reports', icon: BarChart3 },
         { path: '/profile', label: 'Profile', icon: UserCircle },
       ];
