@@ -86,13 +86,13 @@ const App: React.FC = () => {
 
         {/* Nurse shift handoff protocol */}
         <Route path="handoffs" element={
-          <ProtectedRoute allowedRoles={['nurse', 'doctor']}>
+          <ProtectedRoute allowedRoles={['nurse']}>
             <ShiftHandoff />
           </ProtectedRoute>
         } />
         {/* Patient self-report + care team review */}
         <Route path="symptoms" element={
-          <ProtectedRoute allowedRoles={['doctor', 'nurse', 'patient']}>
+          <ProtectedRoute allowedRoles={['nurse', 'patient']}>
             <SymptomLog />
           </ProtectedRoute>
         } />
