@@ -132,6 +132,8 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
+        <QuickActions />
+
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard index={0} label="Total Patients" value={stats?.totalPatients || 0} icon={Users} accent="blue" />
@@ -292,6 +294,8 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
+        <QuickActions />
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <StatCard index={0} label="My Patients" value={stats?.totalPatients || 0} icon={Users} accent="blue" />
           <StatCard index={1} label="Today's Sessions" value={stats?.todaySessions?.length || 0} icon={Calendar} accent="yellow" />
@@ -354,6 +358,8 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
+        <QuickActions />
+
         <div className="card animate-fade-in-up">
           <h3 className="section-title mb-4">Today's Assigned Sessions</h3>
           <div className="space-y-3">
@@ -400,6 +406,8 @@ const Dashboard: React.FC = () => {
           <p className="page-subtitle">Welcome back, {user?.full_name}</p>
         </div>
       </div>
+
+      <QuickActions />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <StatCard index={0} label="Recent Labs" value={stats?.recentLabs?.length || 0} icon={FlaskConical} accent="green" />
