@@ -6,6 +6,7 @@ import axios from 'axios';
 import StatCard from '../components/StatCard';
 import DialysisOrb from '../components/DialysisOrb';
 import SessionsTrendChart from '../components/SessionsTrendChart';
+import QuickActions from '../components/QuickActions';
 import {
   Users,
   UserCheck,
