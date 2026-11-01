@@ -115,7 +115,7 @@ const Layout: React.FC = () => {
     if (role === 'nurse') {
       return [
         { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-        { path: '/dialysis', label: 'Session Floor', icon: Droplets },
+        { path: '/dialysis', label: 'Dialysis Session', icon: Droplets },
         { path: '/handoffs', label: 'Shift Handoff', icon: ClipboardList },
         { path: '/patients', label: 'Patients', icon: Users },
         { path: '/lab-results', label: 'Lab Results', icon: FlaskConical },
